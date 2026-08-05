@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap');
+@font-face { font-family: 'Rodin NTLG'; src: url('assets/rodin-ntlg-pro-db.otf') format('opentype'); font-weight: 700; font-style: normal; }
+
+:root { --ink: #050505; --mint: #eaf4ef; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; color: var(--ink); font-family: Nunito, Arial, sans-serif;
+  cursor: url('assets/custom-cursor.png') 18 12, auto;
+  background: transparent;
+}
+.background-video { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.startup { position: fixed; inset: 0; z-index: 10; background: white; transition: opacity .5s ease; }
+.startup img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.startup-leaving { opacity: 0; pointer-events: none; }
+a, button { cursor: url('assets/custom-cursor.png') 18 12, pointer; }
+.page-shell { max-width: 1180px; margin: auto; padding: 28px 36px 80px; overflow: hidden; position: relative; z-index: 1; }
+.hero { display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; gap: 28px; min-height: 560px; }
+.identity { text-align: center; }
+.mii { width: min(290px, 72%); display: block; margin: auto; border-radius: 34px; }
+.pronouns { width: min(430px, 100%); margin: 8px auto 0; display: block; }
+.flags { display: flex; justify-content: center; gap: 14px; margin-top: 16px; }
+.flags img { width: 46%; max-width: 280px; height: auto; object-fit: contain; }
+.title-card img { display: block; width: 100%; max-width: 650px; height: auto; margin: auto; }
+.about-card { margin: 18px auto 80px; max-width: 1050px; padding: 48px; background: rgba(255,255,255,.62); border-radius: 34px; box-shadow: 0 12px 40px rgba(128, 157, 145, .12); }
+.about-card p { margin: 0; text-align: center; font-family: 'Rodin NTLG', Nunito, Arial, sans-serif; font-size: clamp(1.05rem, 2.2vw, 1.65rem); line-height: 1.42; font-weight: 700; }
+.socials { text-align: center; }
+.social-heading { width: min(440px, 80%); display: block; margin: auto; }
+.social-links { display: flex; justify-content: center; gap: 30px; margin-top: 14px; }
+.social-links a { display: block; width: min(190px, 38%); transition: transform .2s ease, filter .2s ease; }
+.social-links a:hover, .social-links a:focus-visible { transform: scale(1.12); }
+.social-links img { width: 100%; display: block; }
+.miiverse { display: block; width: 165px; margin: 0 auto -4px; }
+@media (max-width: 700px) {
+  .page-shell { padding: 18px 16px 54px; }
+  .hero { grid-template-columns: 1fr; min-height: 0; gap: 22px; padding: 20px 0 40px; }
+  .title-card { text-align: center; }
+  .about-card { padding: 20px 14px; border-radius: 24px; margin-bottom: 52px; }
+  .social-links { gap: 12px; }
+  .miiverse { width: 135px; }
+}
