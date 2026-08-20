@@ -1,0 +1,9 @@
+html,
+body {
+  cursor: url("assets/custom-cursor.png") 18 12, auto;
+}
+
+a,
+button {
+  cursor: url("assets/custom-cursor.png") 18 12, pointer;
+}
