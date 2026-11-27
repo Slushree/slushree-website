@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="discord-bridge" content="on">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Friend List Preview – Wii U Textures</title>
+<link rel="stylesheet" href="/cursor.css">
+<link rel="preload" href="../assets/open-hand-cursor.png" as="image">
+<link rel="preload" href="../assets/grab-cursor.png?v=2" as="image">
+<style>
+  @font-face {
+    font-family: Rodin;
+    src: url("../assets/rodin-ntlg-pro-db.otf");
+  }
+  * { box-sizing: border-box; }
+  html, body { cursor: url("../assets/point-cursor.png") 18 5, auto; }
+  a, button { cursor: url("../assets/point-cursor.png") 18 5, pointer; }
+  body {
+    display: flow-root;
+    margin: 0;
+    min-height: 100dvh;
+    background: #e9eeee url("background.png") center top / 100% 210px repeat-y;
+    color: #263438;
+    font: 16px Rodin, system-ui, sans-serif;
+  }
+  .shell {
+    --list-inset: 4%;
+    --scrollbar-gutter: clamp(38px, 10.08%, 150px);
+    width: min(calc(100% - 2rem), max(760px, 174dvh));
+    height: 100dvh;
+    min-height: 230px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+  }
+  header {
+    --header-height: clamp(42px, 6.3vw, 86px);
+    --art-width: calc(var(--header-height) * 1366 / 86);
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    overflow: hidden;
+    height: var(--header-height);
+    background:
+      radial-gradient(circle, #ffffff17 0 4px, transparent 5px) 0 0 / 20px 20px,
+      linear-gradient(#fabb04, #f4a82d);
+  }
+  header img {
+    display: block;
+    -webkit-user-drag: none;
+    user-select: none;
+    width: var(--art-width);
+    height: calc(var(--header-height) * 768 / 86);
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 var(--art-width);
+    width: calc(var(--art-width) * .7);
+    background: url("header.png") right top / var(--art-width) auto no-repeat;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+  .count {
+    padding: .28rem clamp(.65rem, 2.4vw, 1.5rem);
+    text-align: right;
+    color: #536166;
+    font-size: .85rem;
+    background: #eef2f1;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid #dce4e6;
+  }
+  .my-profile {
+    margin: .5rem 0 0 var(--list-inset);
+    width: calc(100% - var(--list-inset) - var(--scrollbar-gutter));
+    border: 1px solid #dce4e6;
+    border-radius: 10px;
+    background: #f8fafa;
+  }
+  .my-profile .friend { min-height: 0; border-bottom: 0; border-radius: 9px; }
+  .list-area {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--scrollbar-gutter);
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+    padding-inline-start: var(--list-inset);
+    margin-top: .35rem;
+  }
+  .list {
+    /* Let the top selector tips overlap the count bar without a visible gap. */
+    margin-block-start: -4px;
+    padding-block-start: 4px;
+    margin-inline: -9px;
+    padding-inline: 9px;
+    padding-block-end: 3px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    border-radius: 0 0 10px 10px;
+  }
+  .list > .friend { background-color: #f8fafa; }
+  .list > .friend:last-child { border-radius: 0 0 10px 10px; }
+  .list:focus-visible { outline: 2px solid #248a98; outline-offset: -2px; }
+  .keyboard .list:focus, .list:focus:has(.friend.active) { outline: none; }
+  .list::-webkit-scrollbar { display: none; }
+  .scrollbar {
+    --grip-height: clamp(38px, 9dvh, 68px);
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / -1;
+    margin-block: clamp(8px, 5dvh, 36px) clamp(12px, 8dvh, 60px);
+    touch-action: none;
+    width: 78%;
+    justify-self: start;
+  }
+  .scrollbar[hidden] { visibility: hidden; display: block; }
+  .rail {
+    position: absolute;
+    inset: calc(var(--grip-height) / 2) 0;
+    width: clamp(5px, .8vw, 8px);
+    margin: auto;
+    border-radius: 8px;
+    background: #929a9b;
+  }
+  .grip {
+    position: absolute;
+    left: 50%;
+    translate: -50% 0;
+    top: 0;
+    width: clamp(26px, 5vw, 46px);
+    height: var(--grip-height);
+    border: 1px solid #c8d1d1;
+    border-radius: 12px;
+    background: linear-gradient(#fff, #e7ecec);
+    box-shadow: 0 2px 5px #27383b40;
+    cursor: url("../assets/open-hand-cursor.png") 42 22, grab;
+    touch-action: none;
+  }
+  :root { --grab-cursor: url("../assets/grab-cursor.png?v=2") 42 29; }
+  html.dragging, html.dragging *, html.dragging *::before, html.dragging *::after {
+    cursor: var(--grab-cursor), grabbing;
+  }
+  .grip::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("official-grip-ridges.png") center / 90% auto no-repeat;
+    pointer-events: none;
+  }
+  .friend {
+    position: relative;
+    display: grid;
+    grid-template-columns: clamp(95px, 23.5%, 245px) minmax(0, 1fr);
+    align-items: center;
+    gap: .5rem clamp(.55rem, 3vw, 1.5rem);
+    padding: .4rem clamp(.65rem, 2.4vw, 1.5rem);
+    min-height: max(76px, 20%);
+    border-bottom: 1px solid #dce4e6;
+  }
+  .status { display: block; width: 100%; height: clamp(44px, 12.5dvh, 94px); object-fit: contain; object-position: left; }
+  .profile-badge {
+    --badge-height: clamp(44px, 12.5dvh, 94px);
+    height: var(--badge-height);
+    display: grid;
+    align-items: center;
+  }
+  .profile-badge-art {
+    position: relative;
+    width: min(100%, calc(var(--badge-height) * 488 / 234));
+  }
+  .profile-badge .status { height: auto; }
+  .discord-avatar {
+    position: absolute;
+    left: 56.15%;
+    top: 9.83%;
+    width: 38.52%;
+    height: 80.34%;
+    object-fit: cover;
+  }
+  .name {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .2rem .65rem;
+    overflow-wrap: anywhere;
+  }
+  .username { color: #83541a; font-size: .83rem; }
+  .game {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin-top: .35rem;
+    translate: -12px 0;
+  }
+  @media (min-width: 1200px) and (min-height: 650px) {
+    .game { translate: -48px 0; }
+  }
+  .game-icon {
+    --icon-size: 50px;
+    translate: -2px 0;
+    position: relative;
+    align-self: center;
+    display: grid;
+    place-items: center;
+    flex: 0 0 var(--icon-size);
+    margin-inline-start: calc(32px - var(--icon-size));
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #c8cdcb;
+    color: #626a68;
+  }
+  .game-icon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .game-icon .missing-art {
+    font: 16px/16px Rodin, system-ui, sans-serif;
+    transform: translateY(.3px);
+  }
+  .game-name {
+    flex: 1;
+    /* Preserve the original label bounds beside the wider icon. */
+    margin-inline-end: -6px;
+    translate: -6px 0;
+    background: #e1e8e9;
+    border-radius: 6px;
+    padding: .18rem .55rem;
+  }
+  .last-online { display: block; margin-top: .25rem; color: #58686a; }
+  .last-online[hidden] { display: none; }
+  .custom-status {
+    position: absolute;
+    z-index: 25;
+    left: clamp(12px, 4vw, 48px);
+    top: 0;
+    max-width: calc(100% - 24px);
+    transform: translateY(-75%);
+    padding: .3em .85em;
+    border-radius: 999px;
+    background: #f5f7f4;
+    color: #454b49;
+    font-size: .85em;
+    box-shadow: 0 2px 5px #0002;
+    overflow-wrap: anywhere;
+  }
+  .custom-status::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    translate: -50% 0;
+    border: 7px solid transparent;
+    border-top-color: #f5f7f4;
+  }
+  .custom-status { pointer-events: none; }
+  .custom-status[hidden], .friend:not(:hover) .custom-status { display: none; }
+  .my-profile:has(.custom-status:not([hidden])) {
+    margin-top: calc(.5rem + 2em);
+  }
+  .my-profile .custom-status, .friend-badge .custom-status {
+    top: auto;
+    bottom: calc(100% + 6px);
+    left: 75.41%;
+    width: max-content;
+    max-width: min(28ch, 135%);
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .friend-badge .custom-status {
+    box-sizing: border-box;
+    position: fixed;
+    bottom: var(--status-bottom);
+    left: var(--status-left);
+    max-width: var(--status-width);
+    white-space: nowrap;
+    transform: translateX(-25%);
+  }
+  .friend-badge .custom-status::after { left: 25%; }
+  .friend-badge .custom-status.compact { transform: translateX(-50%); }
+  .friend-badge .custom-status.compact::after { left: 50%; }
+  .custom-status-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .friend.active, .list > .friend.active { background-color: #6fe8f2; }
+  .keyboard .friend.active { z-index: 1; scroll-margin-block: 6px; background-color: #8cebF0; }
+  .selector-corner {
+    display: none;
+    position: absolute;
+    left: -7px;
+    z-index: 20;
+    height: clamp(17px, 26%, 34px);
+    aspect-ratio: 1;
+    background: #00abc3;
+    mask-image: url("selector-sheet.png");
+    mask-size: 200% 200%;
+    mask-repeat: no-repeat;
+    filter: drop-shadow(0 0 2px #00abc3a0);
+    pointer-events: none;
+  }
+  .keyboard .friend.active .selector-corner { display: block; }
+  .corner-tl { top: -3px; mask-position: left top; }
+  .corner-bl { bottom: -4px; mask-position: left bottom; }
+  .corner-tr { top: -3px; left: auto; right: -7px; mask-position: right top; }
+  .corner-br { bottom: -4px; left: auto; right: -7px; mask-position: right bottom; }
+  @media (min-width: 1000px) {
+    .shell {
+      --list-inset: 4%;
+      width: min(calc(100% - 2rem), 190dvh);
+      font-size: clamp(16px, 1.75vw, 24px);
+    }
+    .name strong { font-size: 1.2em; }
+    .username, .count { font-size: .85em; }
+    .status { height: clamp(74px, 12.5dvh, 115px); }
+    .profile-badge { --badge-height: clamp(74px, 12.5dvh, 115px); }
+    .profile-badge .status { height: auto; }
+    .friend { padding-block: clamp(8px, 1.1dvh, 14px); }
+    .scrollbar { --grip-height: clamp(68px, 12dvh, 106px); }
+    .rail { width: clamp(8px, 1vw, 13px); }
+    .grip { width: clamp(46px, 5.6vw, 72px); border-radius: 17px; }
+  }
+  .back-link {
+    justify-self: center;
+    margin-top: .55rem;
+    width: 100vw;
+    height: clamp(34px, 3.8vw, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 6vw;
+    font-size: clamp(16px, 1.6vw, 22px);
+    text-decoration: none;
+    color: #394447;
+    border-top: 1px solid #bfc8c8;
+    background: linear-gradient(#f7f8f8, #d7dfe0);
+    box-shadow: 0 2px 4px #27383b26;
+  }
+  .back-link:hover { background: linear-gradient(#fff, #e0e6e7); }
+  .friend-splash {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    background: #ededed;
+    pointer-events: none;
+  }
+  .friend-splash.is-ready { animation: dismiss-splash .3s ease forwards; }
+  .friend-splash img {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    mask-image: none;
+  }
+  @keyframes dismiss-splash { to { opacity: 0; visibility: hidden; } }
+  @media (prefers-reduced-motion: reduce) {
+    .friend-splash.is-ready { animation-duration: 0s; }
+  }
+</style>
+<div class="friend-splash" aria-hidden="true"><img src="friend-splash.png" alt="" draggable="false"></div>
+<main class="shell">
+  <header><img src="header.png" alt="Friend List" draggable="false"></header>
+  <section class="my-profile" aria-label="Your profile"></section>
+  <div class="list-area">
+    <div class="count">Friends online: 0</div>
+    <section class="list" aria-label="Friends" tabindex="0"></section>
+    <div class="scrollbar" aria-hidden="true" hidden>
+      <div class="rail"></div>
+      <div class="grip"></div>
+    </div>
+  </div>
+  <a class="back-link" href="/superhiddenlink/?from=friends">Back</a>
+</main>
+<template id="friend">
+  <article class="friend">
+    <img class="status" src="offline-box.png" alt="Offline">
+    <div>
+      <div class="name"><strong>display</strong><span class="username">username</span></div>
+      <small class="custom-status" hidden><span class="custom-status-text"></span></small>
+      <small class="last-online">Last online: unknown</small>
+    </div>
+    <span class="selector-corner corner-tl" aria-hidden="true"></span>
+    <span class="selector-corner corner-bl" aria-hidden="true"></span>
+    <span class="selector-corner corner-tr" aria-hidden="true"></span>
+    <span class="selector-corner corner-br" aria-hidden="true"></span>
+  </article>
+</template>
+<template id="game-activity">
+  <div class="game">
+    <span class="game-icon" role="img" aria-label="No game artwork available"><span class="missing-art" aria-hidden="true">?</span></span>
+    <small class="game-name" aria-label="Unknown game">???</small>
+  </div>
+</template>
+<script>
+  const splashMinimum = new Promise(resolve => setTimeout(resolve, 1500));
+  const presenceOrigin = location.hostname === '127.0.0.1' && location.port === '8765'
+    ? location.origin
+    : 'https://alluring-transformation-production-0cc8204c.up.railway.app';
+  if (location.protocol === 'file:') {
+    document.querySelector('.back-link').href = '../index.html?from=friends';
+  } else if (presenceOrigin === location.origin && new URLSearchParams(location.search).get('preview') === 'august') {
+    document.querySelector('.back-link').href = '/august-preview/superhiddenlink/?from=friends';
+  }
+  const moveSound = new Audio('../assets/hover-sound.wav');
+  const backSound = new Audio('../assets/friends-back.wav');
+  const friendMusic = new Audio('../assets/BGM_FRD.mp3');
+  friendMusic.loop = true;
+  friendMusic.volume = .65;
+  friendMusic.preload = 'none';
+  const startMusic = () => {
+    if (document.hidden || !friendMusic.paused) return;
+    friendMusic.play().then(() => {
+      document.removeEventListener('pointerdown', startMusic);
+      document.removeEventListener('keydown', startMusic);
+    }).catch(() => {});
+  };
+  document.addEventListener('pointerdown', startMusic);
+  document.addEventListener('keydown', startMusic);
+  window.addEventListener('pageshow', startMusic);
+  moveSound.volume = .45;
+  function playEffect(sound) {
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
+  }
+  document.querySelector('.back-link').addEventListener('click', event => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    const destination = event.currentTarget.href;
+    friendMusic.pause();
+    playEffect(backSound);
+    setTimeout(() => {
+      if (history.length > 1 && /^https:\/\/slushreeisawesome\.lol\/(?:[?#].*)?$/.test(document.referrer)) {
+        history.back();
+      } else {
+        location.assign(destination);
+      }
+    }, 210);
+  });
+  const list = document.querySelector('.list');
+  const template = document.querySelector('#friend');
+  const gameTemplate = document.querySelector('#game-activity');
+
+  function renderCustomStatus(row, value) {
+    const line = row.querySelector('.custom-status');
+    const status = typeof value === 'string' ? value.trim() : '';
+    line.querySelector('.custom-status-text').textContent = status;
+    line.classList.toggle('compact', status.length <= 12);
+    line.hidden = !status;
+  }
+
+  function formatLastSeen(timestamp, now = Date.now()) {
+    if (!timestamp) return 'unknown';
+    const minutes = Math.max(0, Math.floor((now - timestamp) / 60000));
+    if (minutes < 1) return 'Just Now';
+    for (const [size, unit] of [[525600, 'year'], [43200, 'month'], [1440, 'day'], [60, 'hour'], [1, 'minute']]) {
+      if (minutes >= size) {
+        const count = Math.floor(minutes / size);
+        return count + ' ' + unit + (count === 1 ? '' : 's') + ' ago';
+      }
+    }
+  }
+  function updateLastOnline(label) {
+    label.textContent = 'Last online: ' + formatLastSeen(Number(label.dataset.lastSeen));
+  }
+  function recordLastOnline(row, username, online, timestamp) {
+    const label = row.querySelector('.last-online');
+    label.hidden = online;
+    let lastSeen = Math.max(Number(timestamp) || 0, Number(label.dataset.lastSeen) || 0,
+      online ? Date.now() : 0);
+    try {
+      const key = 'friends:last-seen:' + username;
+      const saved = Number(localStorage.getItem(key)) || 0;
+      if (lastSeen > saved) localStorage.setItem(key, String(lastSeen));
+      lastSeen = Math.max(lastSeen, saved);
+    } catch {
+      // The label still works for this visit if storage is unavailable.
+    }
+    label.dataset.lastSeen = String(lastSeen);
+    updateLastOnline(label);
+  }
+  setInterval(() => {
+    document.querySelectorAll('.last-online[data-last-seen]:not([hidden])').forEach(updateLastOnline);
+    const owner = document.querySelector('.my-profile .friend');
+    if (owner?.querySelector('.last-online[hidden][data-last-seen]')) {
+      recordLastOnline(owner, 'slushree', true);
+    }
+  }, 15000);
+
+  function renderGame(row, status, game) {
+    row.querySelector('.game')?.remove();
+    if (status !== 'online' && status !== 'dnd') return;
+    if (!game) return;
+    const activity = gameTemplate.content.cloneNode(true);
+    if (game?.name) {
+      const name = activity.querySelector('.game-name');
+      name.textContent = game.name;
+      name.removeAttribute('aria-label');
+    }
+    if (game?.imageUrl) {
+      const icon = activity.querySelector('.game-icon');
+      const artwork = document.createElement('img');
+      artwork.alt = '';
+      artwork.addEventListener('load', () => {
+        icon.replaceChildren(artwork);
+        icon.setAttribute('aria-label', 'Game artwork');
+      }, { once: true });
+      artwork.src = game.imageUrl;
+    }
+    row.querySelector('.name').after(activity);
+  }
+
+  const profile = template.content.cloneNode(true);
+  const profileStatus = profile.querySelector('.status');
+  const profileBadge = document.createElement('div');
+  profileBadge.className = 'profile-badge';
+  profileStatus.replaceWith(profileBadge);
+  const profileBadgeArt = document.createElement('div');
+  profileBadgeArt.className = 'profile-badge-art';
+  profileBadgeArt.append(profileStatus);
+  profileBadgeArt.append(profile.querySelector('.custom-status'));
+  const publicAvatar = new Image();
+  publicAvatar.className = 'discord-avatar';
+  publicAvatar.alt = '';
+  publicAvatar.onload = () => { if (!profileBadgeArt.querySelector('.discord-avatar')) profileBadgeArt.append(publicAvatar); };
+  publicAvatar.src = 'slushree-avatar.png';
+  profileBadge.append(profileBadgeArt);
+  profile.querySelector('strong').textContent = 'Slushree';
+  profile.querySelector('.username').textContent = 'Slushree';
+  profile.querySelector('.last-online').hidden = true;
+  renderGame(profile, 'online');
+  document.querySelector('.my-profile').append(profile);
+
+  const friendRows = [
+    { key: 'blizzerd', name: 'Blizzerd', username: 'andant5742' },
+    { key: 'noblooz', name: 'Noblooz', username: 'noblooz' },
+    { key: 'operdale', name: 'Operdale', username: 'operdale' },
+    { key: 'weaponX', name: 'Weapon X', username: 'therealvillan' },
+    { key: 'stillNotTyler', name: 'StillNotTyler', username: 'ihasafacelulz' },
+    { key: 'zoee', name: 'zoee', username: 'zoe2340' },
+    { key: 'kevin', name: 'kevin', username: 'destroybonely' },
+    { key: 'bbRocky', name: 'BB Rocky', username: 'bbrroocckkyy' },
+  ].map(({ key, name, username }) => {
+    const row = template.content.firstElementChild.cloneNode(true);
+    row.querySelector('strong').textContent = name;
+    row.querySelector('.username').textContent = username;
+
+    const status = row.querySelector('.status');
+    const bubble = row.querySelector('.custom-status');
+    const badge = profileBadge.cloneNode(false);
+    const artwork = profileBadgeArt.cloneNode(false);
+    artwork.classList.add('friend-badge');
+    status.replaceWith(badge);
+    badge.append(artwork);
+    artwork.append(status, bubble);
+    list.append(row);
+
+    function positionBubble() {
+      const { left, width, top } = artwork.getBoundingClientRect();
+      const anchor = left + width * .7541;
+      const viewportWidth = document.documentElement.clientWidth;
+      // The arrow sits a quarter of the way across the bubble.
+      const available = Math.max(0, Math.min((anchor - 8) / .25, (viewportWidth - 8 - anchor) / .75));
+      bubble.style.setProperty('--status-left', anchor + 'px');
+      bubble.style.setProperty('--status-bottom', (window.innerHeight - top + 6) + 'px');
+      bubble.style.setProperty('--status-width', available + 'px');
+    }
+
+    row.addEventListener('pointerenter', positionBubble);
+    new ResizeObserver(positionBubble).observe(artwork);
+    return { key, username, row, artwork, status, positionBubble };
+  });
+
+  function positionFriendBubbles() {
+    friendRows.forEach(friend => friend.positionBubble());
+  }
+  list.addEventListener('scroll', positionFriendBubbles, { passive: true });
+  window.addEventListener('resize', positionFriendBubbles);
+
+  const readyTasks = [];
+  const decodeImage = image => image.decode().catch(() => {});
+  readyTasks.push(decodeImage(publicAvatar));
+  if (document.querySelector('meta[name="discord-bridge"]').content === 'on') {
+    const ownRow = document.querySelector('.my-profile .friend');
+    function applyPresence(presence) {
+      const online = presence?.status === 'online' || presence?.status === 'dnd';
+      profileStatus.src = online ? 'online-box.png' : 'offline-box.png';
+      profileStatus.alt = online ? 'Online' : 'Offline';
+      if (presence?.status) {
+        recordLastOnline(ownRow, 'slushree', online);
+      }
+      renderGame(ownRow, presence?.status, presence?.game);
+      renderCustomStatus(ownRow, presence?.customStatus);
+      const onlineFriends = [];
+      const offlineFriends = [];
+      for (const friend of friendRows) {
+        const group = presence?.[friend.key]?.status === 'online' ? onlineFriends : offlineFriends;
+        group.push(friend.row);
+      }
+      document.querySelector('.count').textContent = 'Friends online: ' + onlineFriends.length;
+      if (presence) {
+        [...onlineFriends, ...offlineFriends].forEach((row, index) => {
+          if (list.children[index] !== row) list.insertBefore(row, list.children[index]);
+        });
+        positionFriendBubbles();
+      }
+
+      for (const { key, username, row, artwork, status } of friendRows) {
+        const friend = presence?.[key];
+        if (!friend) continue;
+        if (friend.displayName) row.querySelector('.name strong').textContent = friend.displayName;
+        const active = friend.status === 'online';
+        status.src = active ? 'online-box.png' : 'offline-box.png';
+        status.alt = active ? 'Online' : 'Offline';
+        renderGame(row, friend.status, friend.game);
+        renderCustomStatus(row, active ? friend.customStatus : null);
+        const lastOnline = row.querySelector('.last-online');
+        lastOnline.hidden = active;
+        let lastSeen = Number(friend.lastSeen) || (active ? Date.now() : 0);
+        try {
+          const storageKey = 'friends:last-seen:' + username;
+          const previous = Number(localStorage.getItem(storageKey)) || 0;
+          if (lastSeen > previous) localStorage.setItem(storageKey, String(lastSeen));
+          lastSeen = Math.max(lastSeen, previous);
+        } catch {}
+        lastOnline.dataset.lastSeen = String(lastSeen);
+        updateLastOnline(lastOnline);
+        if (friend.avatarUrl && !artwork.querySelector('.discord-avatar')) {
+          const avatar = new Image();
+          avatar.className = 'discord-avatar';
+          avatar.alt = '';
+          avatar.referrerPolicy = 'no-referrer';
+          avatar.src = friend.avatarUrl;
+          artwork.append(avatar);
+          avatar.addEventListener('error', () => avatar.remove(), { once: true });
+        }
+      }
+    }
+    let streamRevision = 0;
+    async function refreshPresence() {
+      const revision = streamRevision;
+      try {
+        const response = await fetch(presenceOrigin + '/discord/presence', { signal: AbortSignal.timeout(8000) });
+        if (!response.ok) throw new Error('Presence unavailable');
+        const { presence } = await response.json();
+        if (revision === streamRevision) applyPresence(presence);
+      } catch {
+        // Keep the last known activity during a brief network interruption.
+      }
+    }
+    readyTasks.push(refreshPresence());
+    const stream = new EventSource(presenceOrigin + '/discord/presence/stream');
+    let fallback;
+    stream.onmessage = event => {
+      clearInterval(fallback);
+      fallback = undefined;
+      streamRevision++;
+      applyPresence(JSON.parse(event.data).presence);
+    };
+    stream.onerror = () => {
+      if (fallback !== undefined) return;
+      fallback = setInterval(refreshPresence, 5000);
+    };
+  }
+
+  for (let index = friendRows.length; index < 6; index++) {
+    list.append(template.content.cloneNode(true));
+  }
+
+  const shell = document.querySelector('.shell');
+  const rows = [document.querySelector('.my-profile .friend'), ...list.children];
+  const pageLoaded = document.readyState === 'complete'
+    ? Promise.resolve()
+    : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+  Promise.allSettled([...readyTasks, pageLoaded, splashMinimum]).then(async () => {
+    await Promise.allSettled([
+      document.fonts.ready,
+      ...Array.from(shell.querySelectorAll('img'), decodeImage),
+    ]);
+    document.querySelector('.friend-splash').classList.add('is-ready');
+  });
+  const scrollbar = document.querySelector('.scrollbar');
+  const grip = scrollbar.querySelector('.grip');
+  const maxScroll = () => Math.max(0, list.scrollHeight - list.clientHeight);
+  const gripTravel = () => Math.max(0, scrollbar.clientHeight - grip.offsetHeight);
+
+  function updateGrip() {
+    const range = maxScroll();
+    scrollbar.hidden = range === 0 || gripTravel() === 0;
+    const progress = range ? Math.max(0, Math.min(1, list.scrollTop / range)) : 0;
+    grip.style.transform = `translateY(${progress * gripTravel()}px)`;
+  }
+
+  let drag;
+  scrollbar.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0 || !event.isPrimary || !gripTravel()) return;
+    const gripTop = grip.getBoundingClientRect().top;
+    const offset = event.target === grip ? event.clientY - gripTop : grip.offsetHeight / 2;
+    drag = { id: event.pointerId, offset };
+    scrollbar.setPointerCapture(event.pointerId);
+    document.documentElement.classList.add('dragging');
+    scrollToPointer(event.clientY);
+  });
+  function scrollToPointer(y) {
+    const travel = gripTravel();
+    if (!travel) return;
+    const position = y - scrollbar.getBoundingClientRect().top - drag.offset;
+    list.scrollTop = position / travel * maxScroll();
+    updateGrip();
+  }
+  scrollbar.addEventListener('pointermove', (event) => {
+    if (event.pointerId === drag?.id) scrollToPointer(event.clientY);
+  });
+  scrollbar.addEventListener('lostpointercapture', () => {
+    drag = null;
+    document.documentElement.classList.remove('dragging');
+  });
+  list.addEventListener('scroll', updateGrip);
+  const scrollObserver = new ResizeObserver(updateGrip);
+  scrollObserver.observe(list);
+  scrollObserver.observe(scrollbar);
+  rows.forEach((row) => scrollObserver.observe(row));
+  updateGrip();
+
+  let active = null;
+  let keyboardIndex = -1;
+  function highlight(row, keyboard) {
+    if (row && row !== active) playEffect(moveSound);
+    active?.classList.remove('active');
+    active = row;
+    active?.classList.add('active');
+    shell.classList.toggle('keyboard', keyboard);
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    event.preventDefault();
+    const direction = event.key === 'ArrowUp' ? -1 : 1;
+    const orderedRows = [rows[0], ...list.children];
+    keyboardIndex = active
+      ? Math.max(0, Math.min(orderedRows.length - 1, orderedRows.indexOf(active) + direction))
+      : 0;
+    highlight(orderedRows[keyboardIndex], true);
+    active.scrollIntoView({ block: 'nearest' });
+  });
+
+  document.addEventListener('pointermove', (event) => {
+    if (drag || event.pointerType !== 'mouse' || (!event.movementX && !event.movementY)) return;
+    highlight(event.target.closest('.list .friend, .my-profile .friend'), false);
+  });
+</script>
+</html>
