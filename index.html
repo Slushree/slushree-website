@@ -4,22 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slushree's About Me!</title>
+  <meta property="og:url" content="https://slushreeisawesome.lol/" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Slushree's About Me!" />
-  <meta property="og:url" content="https://slushreeisawesome.lol/" />
-  <meta property="og:image" content="https://slushreeisawesome.lol/assets/link-preview.png" />
+  <meta property="og:image" content="https://slushreeisawesome.lol/superhiddenlink/share-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Slushree's About Me!" />
-  <meta name="twitter:image" content="https://slushreeisawesome.lol/assets/link-preview.png" />
+  <meta name="twitter:image" content="https://slushreeisawesome.lol/superhiddenlink/share-cover.png" />
   <link rel="icon" type="image/png" href="assets/wii-u-browser-icon.png" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="superhiddenlink/style.css" />
 </head>
 <body>
+<script>
+  document.addEventListener('dragstart', event => {
+    if (event.target.closest('img, a:has(img)')) event.preventDefault();
+  });
+</script>
   <video class="background-video" id="background-video" autoplay muted playsinline preload="auto" aria-hidden="true">
     <source src="assets/wii-u-background.mp4" type="video/mp4" />
   </video>
   <div class="startup" id="startup" role="status" aria-label="Starting Slushree's website">
-    <img src="assets/im-back.png" alt="I'm back" />
+    <img src="assets/startup-original.png" alt="" />
   </div>
   <main class="page-shell">
     <section class="hero" aria-label="Slushree introduction">
@@ -32,16 +37,18 @@
         </div>
       </div>
       <div class="title-card">
+        <a class="friends-launch" href="https://slushreeisawesome.lol/superhiddenlink/friends/" aria-label="Open Friend List">
+          <img src="superhiddenlink/friend-list-icon.png" alt="" width="116" height="113" />
+        </a>
         <img src="assets/Slushree's about me text.png" alt="Slushree’s About Me!" />
       </div>
     </section>
 
     <section class="about-card">
-      <p>Hello! I’m Slushree! I want this website to be a place where I can express myself and show the cool work I’ve done! I want to start making music (WARNING: DON’T LISTEN TO MY STUFF.) I’m experimenting with music and other creative stuff before I finish high school. My 1, 2, and 3 artists are STOMACH BOOK, Tyler, The Creator, and Femtanyl. Those three are my inspo for music. I also stream on TikTok. I will start posting soon on YouTube. I REALLY REALLY LOVE FORTNITE, I started in CH1 S7. As you can tell, I love the Wii U. This website will continue to update over time, so check back for new stuff!</p>
+      <p>Hello! I'm Slushree! I want this website to be a place where I can express myself and show the cool work I've done! I want to start making music (WARNING: DON'T LISTEN TO MY STUFF.) I'm experimenting with music and other creative stuff before I finish high school. My 1, 2, and 3 artists are STOMACH BOOK, Tyler, The Creator, and Femtanyl. Those three are my inspo for music. I also stream on TikTok. I will start posting soon on YouTube. I REALLY REALLY LOVE FORTNITE, I started in CH1 S7. As you can tell, I love the Wii U. This website will continue to update over time, so check back for new stuff!</p>
     </section>
 
     <section class="socials" aria-label="Social links">
-      <img class="miiverse" src="assets/miiverse (1).webp" alt="Miiverse" />
       <img class="social-heading" src="assets/Socials! wii u (1).png" alt="Socials!" />
       <div class="social-links">
         <a href="https://www.tiktok.com/@slushree?lang=en" target="_blank" rel="noopener noreferrer" aria-label="TikTok link">
@@ -54,6 +61,6 @@
     </section>
 
   </main>
-  <script src="script.js"></script>
+  <script src="superhiddenlink/script.js"></script>
 </body>
 </html>
