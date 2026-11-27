@@ -356,7 +356,7 @@
     z-index: 100;
     display: grid;
     place-items: center;
-    background: #ededed;
+    background: linear-gradient(#d9dad9, #efefee 45%, #d3d5d3);
     touch-action: none;
   }
   .friend-splash.is-ready { animation: dismiss-splash .3s ease forwards; }
@@ -368,22 +368,44 @@
     visibility: hidden;
     pointer-events: none;
   }
-  .friend-splash img {
-    display: block;
+  .friend-splash::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    mask-image: none;
+    inset: 5.5% 2.3% 0;
+    border-radius: clamp(30px, 9vw, 126px) clamp(30px, 9vw, 126px) 0 0;
+    background: linear-gradient(#fafafa, #f1f2f0 65%, #e1e2e0);
+  }
+  .splash-brand {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: clamp(14px, 5dvh, 36px);
+    transform: translateY(3dvh);
+    color: #484a48;
+    font-size: clamp(19px, 5.3dvh, 48px);
+  }
+  .splash-brand img {
+    display: block;
+    width: clamp(64px, 17.8dvh, 160px);
+    aspect-ratio: 1;
+    padding: 11%;
+    object-fit: contain;
+    background: linear-gradient(#fcfcfc, #edf0ee);
+    border-radius: 10%;
+    box-shadow: 0 5px 12px #0003;
+    user-select: none;
   }
   @keyframes dismiss-splash { to { opacity: 0; visibility: hidden; } }
   @media (prefers-reduced-motion: reduce) {
     .friend-splash.is-ready { animation-duration: 0s; }
   }
 </style>
-<div class="friend-splash" aria-hidden="true"><img src="friend-splash.png" alt="" draggable="false"></div>
+<div class="friend-splash" role="status" aria-label="Loading Friend List">
+  <div class="splash-brand" aria-hidden="true">
+    <img src="../friend-list-icon.png" alt="" draggable="false">
+    <span>Friend List</span>
+  </div>
+</div>
 <main class="shell" inert>
   <header><img src="header.png" alt="Friend List" draggable="false"></header>
   <section class="my-profile" aria-label="Your profile"></section>
@@ -427,7 +449,7 @@
   const presenceOrigin = 'https://alluring-transformation-production-0cc8204c.up.railway.app';
   const moveSound = new Audio('../assets/hover-sound.wav');
   const backSound = new Audio('../assets/friends-back.wav');
-  const friendMusic = new Audio('../assets/BGM_FRD.mp3');
+  const friendMusic = new Audio('../assets/friend-list-loop.flac');
   const embedded = window.parent !== window && new URLSearchParams(location.search).get('embedded') === '1';
   friendMusic.loop = true;
   friendMusic.volume = .65;
