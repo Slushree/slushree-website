@@ -536,7 +536,7 @@
   profileBadge.append(profileBadgeArt);
   profile.querySelector('strong').textContent = 'Slushree';
   profile.querySelector('.username').textContent = 'Slushree';
-  profile.querySelector('.last-online').hidden = true;
+  recordLastOnline(profile, 'slushree', false);
   renderGame(profile, 'online');
   document.querySelector('.my-profile').append(profile);
 
@@ -553,6 +553,7 @@
     const row = template.content.firstElementChild.cloneNode(true);
     row.querySelector('strong').textContent = name;
     row.querySelector('.username').textContent = username;
+    recordLastOnline(row, username, false);
 
     const status = row.querySelector('.status');
     const bubble = row.querySelector('.custom-status');
@@ -623,17 +624,7 @@
         status.alt = active ? 'Online' : 'Offline';
         renderGame(row, friend.status, friend.game);
         renderCustomStatus(row, active ? friend.customStatus : null);
-        const lastOnline = row.querySelector('.last-online');
-        lastOnline.hidden = active;
-        let lastSeen = Number(friend.lastSeen) || (active ? Date.now() : 0);
-        try {
-          const storageKey = 'friends:last-seen:' + username;
-          const previous = Number(localStorage.getItem(storageKey)) || 0;
-          if (lastSeen > previous) localStorage.setItem(storageKey, String(lastSeen));
-          lastSeen = Math.max(lastSeen, previous);
-        } catch {}
-        lastOnline.dataset.lastSeen = String(lastSeen);
-        updateLastOnline(lastOnline);
+        recordLastOnline(row, username, active, friend.lastSeen);
         if (friend.avatarUrl && !artwork.querySelector('.discord-avatar')) {
           const avatar = new Image();
           avatar.className = 'discord-avatar';
