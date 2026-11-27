@@ -360,6 +360,14 @@
     touch-action: none;
   }
   .friend-splash.is-ready { animation: dismiss-splash .3s ease forwards; }
+  .shell[inert] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .shell[inert] * {
+    visibility: hidden;
+    pointer-events: none;
+  }
   .friend-splash img {
     display: block;
     position: absolute;
