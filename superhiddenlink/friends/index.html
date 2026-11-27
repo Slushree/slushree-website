@@ -402,6 +402,11 @@
   </div>
 </template>
 <script>
+  document.addEventListener('dragstart', event => {
+    if (event.target.closest('img, a:has(img)')) event.preventDefault();
+  });
+</script>
+<script>
   const splashMinimum = new Promise(resolve => setTimeout(resolve, 1500));
   const presenceOrigin = location.hostname === '127.0.0.1' && location.port === '8765'
     ? location.origin

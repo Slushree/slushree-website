@@ -16,6 +16,11 @@
   <link rel="stylesheet" href="/superhiddenlink/style.css" />
 </head>
 <body>
+<script>
+  document.addEventListener('dragstart', event => {
+    if (event.target.closest('img, a:has(img)')) event.preventDefault();
+  });
+</script>
   <video class="background-video" id="background-video" autoplay muted playsinline preload="auto" aria-hidden="true">
     <source src="assets/wii-u-background.mp4" type="video/mp4" />
   </video>
