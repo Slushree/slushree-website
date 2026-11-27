@@ -232,6 +232,20 @@
   }
   .last-online { display: block; margin-top: .25rem; color: #58686a; }
   .last-online[hidden] { display: none; }
+  @media (max-width: 700px) {
+    .game { translate: none; }
+    .game-icon {
+      --icon-size: 32px;
+      margin-inline-start: 0;
+      translate: none;
+    }
+    .game-name {
+      margin-inline-end: 0;
+      translate: none;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
   .custom-status {
     position: absolute;
     z-index: 25;
