@@ -630,14 +630,27 @@
         renderGame(row, friend.status, friend.game);
         renderCustomStatus(row, active ? friend.customStatus : null);
         recordLastOnline(row, username, active, friend.lastSeen);
-        if (friend.avatarUrl && !artwork.querySelector('.discord-avatar')) {
+        const currentAvatar = artwork.querySelector('.discord-avatar');
+        if (friend.avatarUrl && currentAvatar?.src !== friend.avatarUrl &&
+            artwork.dataset.pendingAvatar !== friend.avatarUrl) {
           const avatar = new Image();
           avatar.className = 'discord-avatar';
           avatar.alt = '';
           avatar.referrerPolicy = 'no-referrer';
+          const url = friend.avatarUrl;
+          artwork.dataset.pendingAvatar = url;
+          avatar.addEventListener('load', () => {
+            if (artwork.dataset.pendingAvatar !== url) return;
+            delete artwork.dataset.pendingAvatar;
+            artwork.querySelector('.discord-avatar')?.remove();
+            artwork.append(avatar);
+          }, { once: true });
+          avatar.addEventListener('error', () => {
+            if (artwork.dataset.pendingAvatar === url) delete artwork.dataset.pendingAvatar;
+          }, { once: true });
           avatar.src = friend.avatarUrl;
-          artwork.append(avatar);
-          avatar.addEventListener('error', () => avatar.remove(), { once: true });
+        } else if (currentAvatar?.src === friend.avatarUrl) {
+          delete artwork.dataset.pendingAvatar;
         }
       }
     }
