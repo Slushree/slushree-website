@@ -1,10 +1,8 @@
 const startup = document.querySelector('#startup');
 const backgroundVideo = document.querySelector('#background-video');
 
-const firstVisit = !localStorage.getItem('slushree-jingle-played');
-const introSound = new Audio(
-  firstVisit ? 'assets/transfer-complete.mp3' : 'assets/startup.mp3'
-);
+const firstVisit = false;
+const introSound = new Audio('assets/startup.mp3');
 const mainMusic = new Audio('assets/main-music.mp3');
 const friendsMusic = new Audio('site/assets/BGM_FRD.mp3');
 friendsMusic.loop = true;
