@@ -432,8 +432,17 @@
   document.addEventListener('pointerdown', startMusic);
   document.addEventListener('keydown', startMusic);
   window.addEventListener('pageshow', startMusic);
+  function pauseSound() {
+    [friendMusic, moveSound, backSound].forEach(audio => audio.pause());
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) pauseSound();
+    else startMusic();
+  });
+  window.addEventListener('pagehide', pauseSound);
   moveSound.volume = .45;
   function playEffect(sound) {
+    if (document.hidden) return;
     sound.currentTime = 0;
     sound.play().catch(() => {});
   }

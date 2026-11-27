@@ -23,6 +23,7 @@ if (firstVisit) {
 }
 
 function playAudio(audio) {
+  if (document.hidden && audio !== backgroundVideo) return;
   audio.play().catch(() => {});
 }
 
@@ -83,12 +84,21 @@ document.addEventListener('pointerdown', () => {
   }
 }, { once: false });
 
+function pauseSound() {
+  [introSound, mainMusic, clickSound, hoverSound].forEach(audio => audio.pause());
+}
+
+function resumeMusic() {
+  playAudio(introFinished ? mainMusic : introSound);
+}
+
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    mainMusic.pause();
-  } else if (startupFinished && introFinished) {
-    playAudio(mainMusic);
-  }
+  if (document.hidden) pauseSound();
+  else resumeMusic();
+});
+window.addEventListener('pagehide', pauseSound);
+window.addEventListener('pageshow', event => {
+  if (event.persisted) resumeMusic();
 });
 
 document.querySelectorAll('a[href]:not([href="#"])').forEach((link) => {
