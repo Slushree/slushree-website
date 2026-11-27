@@ -21,7 +21,7 @@ a, button { cursor: url('../assets/custom-cursor.png') 18 12, pointer; }
 .flags { display: flex; justify-content: center; gap: 14px; margin-top: 16px; }
 .flags img { width: 46%; max-width: 280px; height: auto; object-fit: contain; }
 .title-card img { display: block; width: 100%; max-width: 650px; height: auto; margin: auto; }
-.about-card { margin: 18px auto 80px; max-width: 1050px; padding: 48px; background: rgba(255,255,255,.62); border-radius: 34px; box-shadow: 0 12px 40px rgba(128, 157, 145, .12); }
+.about-card { margin: 18px auto 80px; max-width: 1050px; padding: 48px; background: #fff; border-radius: 34px; box-shadow: 0 12px 40px rgba(128, 157, 145, .12); }
 .about-card p { margin: 0; text-align: center; font-family: 'Rodin NTLG', Nunito, Arial, sans-serif; font-size: clamp(1.05rem, 2.2vw, 1.65rem); line-height: 1.42; font-weight: 700; }
 .socials { text-align: center; }
 .social-heading { width: min(440px, 80%); display: block; margin: auto; }
