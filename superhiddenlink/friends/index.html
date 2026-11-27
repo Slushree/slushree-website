@@ -427,11 +427,12 @@
   const moveSound = new Audio('../assets/hover-sound.wav');
   const backSound = new Audio('../assets/friends-back.wav');
   const friendMusic = new Audio('../assets/BGM_FRD.mp3');
+  const embedded = window.parent !== window && new URLSearchParams(location.search).get('embedded') === '1';
   friendMusic.loop = true;
   friendMusic.volume = .65;
   friendMusic.preload = 'none';
   const startMusic = () => {
-    if (document.hidden || !friendMusic.paused) return;
+    if (embedded || document.hidden || !friendMusic.paused) return;
     friendMusic.play().then(() => {
       document.removeEventListener('pointerdown', startMusic);
       document.removeEventListener('keydown', startMusic);
@@ -461,7 +462,9 @@
     friendMusic.pause();
     playEffect(backSound);
     setTimeout(() => {
-      if (history.length > 1 && /^https:\/\/slushreeisawesome\.lol\/(?:[?#].*)?$/.test(document.referrer)) {
+      if (embedded) {
+        window.parent.postMessage('friends:back', location.origin);
+      } else if (history.length > 1 && /^https:\/\/slushreeisawesome\.lol\/(?:[?#].*)?$/.test(document.referrer)) {
         history.back();
       } else {
         location.assign(destination);

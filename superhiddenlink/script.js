@@ -6,6 +6,10 @@ const introSound = new Audio(
   firstVisit ? 'assets/transfer-complete.mp3' : 'assets/startup.mp3'
 );
 const mainMusic = new Audio('assets/main-music.mp3');
+const friendsMusic = new Audio('superhiddenlink/assets/BGM_FRD.mp3');
+friendsMusic.loop = true;
+friendsMusic.volume = .65;
+let friendsFrame = null;
 const hoverSound = new Audio('assets/hover-sound.wav');
 const clickSound = new Audio('assets/click-sound.wav');
 
@@ -28,7 +32,7 @@ function playAudio(audio) {
 }
 
 function startMainMusic() {
-  if (introFinished) playAudio(mainMusic);
+  if (introFinished && !friendsFrame) playAudio(mainMusic);
 }
 
 backgroundVideo.addEventListener('loadedmetadata', () => {
@@ -78,6 +82,7 @@ if (returningFromFriends) {
 }
 
 document.addEventListener('pointerdown', () => {
+  if (friendsFrame) return;
   if (!startupFinished && introSound.paused) {
     playAudio(introSound);
   }
@@ -88,12 +93,42 @@ document.addEventListener('pointerdown', () => {
 }, { once: false });
 
 function pauseSound() {
-  [introSound, mainMusic, clickSound, hoverSound].forEach(audio => audio.pause());
+  [introSound, mainMusic, clickSound, hoverSound, friendsMusic].forEach(audio => audio.pause());
 }
 
 function resumeMusic() {
-  playAudio(introFinished ? mainMusic : introSound);
+  playAudio(friendsFrame ? friendsMusic : introFinished ? mainMusic : introSound);
 }
+
+const friendsLink = document.querySelector('.friends-launch');
+friendsLink.addEventListener('click', event => {
+  if (location.protocol === 'file:' || event.button !== 0 ||
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  if (friendsFrame) return;
+  pauseSound();
+  playAudio(friendsMusic);
+  const url = new URL(friendsLink.href);
+  url.searchParams.set('embedded', '1');
+  friendsFrame = document.createElement('iframe');
+  friendsFrame.title = 'Friends List';
+  friendsFrame.className = 'friends-frame';
+  friendsFrame.src = url.href;
+  document.body.append(friendsFrame);
+  document.querySelector('.page-shell').inert = true;
+  friendsFrame.focus();
+});
+
+window.addEventListener('message', event => {
+  if (!friendsFrame || event.source !== friendsFrame.contentWindow ||
+      event.origin !== location.origin || event.data !== 'friends:back') return;
+  friendsFrame.remove();
+  friendsFrame = null;
+  friendsMusic.pause();
+  document.querySelector('.page-shell').inert = false;
+  friendsLink.focus({ preventScroll: true });
+  resumeMusic();
+});
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) pauseSound();
