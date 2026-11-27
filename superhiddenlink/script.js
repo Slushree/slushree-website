@@ -66,6 +66,9 @@ function finishStartup() {
 const returningFromFriends = location.pathname.includes('/superhiddenlink/') &&
   new URLSearchParams(location.search).get('from') === 'friends';
 if (returningFromFriends) {
+  const cleanUrl = new URL(location.href);
+  cleanUrl.searchParams.delete('from');
+  history.replaceState(history.state, '', cleanUrl);
   startupFinished = introFinished = true;
   startup.remove();
   startMainMusic();
