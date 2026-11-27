@@ -6,7 +6,7 @@ const introSound = new Audio(
   firstVisit ? 'assets/transfer-complete.mp3' : 'assets/startup.mp3'
 );
 const mainMusic = new Audio('assets/main-music.mp3');
-const friendsMusic = new Audio('superhiddenlink/assets/BGM_FRD.mp3');
+const friendsMusic = new Audio('site/assets/BGM_FRD.mp3');
 friendsMusic.loop = true;
 friendsMusic.volume = .65;
 let friendsFrame = null;

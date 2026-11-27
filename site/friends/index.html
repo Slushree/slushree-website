@@ -4,7 +4,7 @@
 <meta name="discord-bridge" content="on">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Friend List Preview – Wii U Textures</title>
+<title>Friend List</title>
 <link rel="stylesheet" href="/cursor.css">
 <link rel="preload" href="../assets/open-hand-cursor.png" as="image">
 <link rel="preload" href="../assets/grab-cursor.png?v=2" as="image">
@@ -424,14 +424,7 @@
 </script>
 <script>
   const splashMinimum = new Promise(resolve => setTimeout(resolve, 1500));
-  const presenceOrigin = location.hostname === '127.0.0.1' && location.port === '8765'
-    ? location.origin
-    : 'https://alluring-transformation-production-0cc8204c.up.railway.app';
-  if (location.protocol === 'file:') {
-    document.querySelector('.back-link').href = '../index.html?from=friends';
-  } else if (presenceOrigin === location.origin && new URLSearchParams(location.search).get('preview') === 'august') {
-    document.querySelector('.back-link').href = '/august-preview/superhiddenlink/?from=friends';
-  }
+  const presenceOrigin = 'https://alluring-transformation-production-0cc8204c.up.railway.app';
   const moveSound = new Audio('../assets/hover-sound.wav');
   const backSound = new Audio('../assets/friends-back.wav');
   const friendMusic = new Audio('../assets/BGM_FRD.mp3');
