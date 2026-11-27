@@ -357,7 +357,7 @@
     display: grid;
     place-items: center;
     background: #ededed;
-    pointer-events: none;
+    touch-action: none;
   }
   .friend-splash.is-ready { animation: dismiss-splash .3s ease forwards; }
   .friend-splash img {
@@ -376,7 +376,7 @@
   }
 </style>
 <div class="friend-splash" aria-hidden="true"><img src="friend-splash.png" alt="" draggable="false"></div>
-<main class="shell">
+<main class="shell" inert>
   <header><img src="header.png" alt="Friend List" draggable="false"></header>
   <section class="my-profile" aria-label="Your profile"></section>
   <div class="list-area">
@@ -715,7 +715,11 @@
       document.fonts.ready,
       ...Array.from(shell.querySelectorAll('img'), decodeImage),
     ]);
-    document.querySelector('.friend-splash').classList.add('is-ready');
+    const splash = document.querySelector('.friend-splash');
+    splash.classList.add('is-ready');
+    await Promise.allSettled(splash.getAnimations().map(animation => animation.finished));
+    splash.remove();
+    shell.inert = false;
   });
   const scrollbar = document.querySelector('.scrollbar');
   const grip = scrollbar.querySelector('.grip');
@@ -771,7 +775,7 @@
   }
 
   document.addEventListener('keydown', (event) => {
-    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (shell.inert || event.altKey || event.ctrlKey || event.metaKey) return;
     if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
     event.preventDefault();
     const direction = event.key === 'ArrowUp' ? -1 : 1;
@@ -784,7 +788,7 @@
   });
 
   document.addEventListener('pointermove', (event) => {
-    if (drag || event.pointerType !== 'mouse' || (!event.movementX && !event.movementY)) return;
+    if (shell.inert || drag || event.pointerType !== 'mouse' || (!event.movementX && !event.movementY)) return;
     highlight(event.target.closest('.list .friend, .my-profile .friend'), false);
   });
 </script>
