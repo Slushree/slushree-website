@@ -195,20 +195,14 @@
     align-items: center;
     gap: .4rem;
     margin-top: .35rem;
-    translate: -12px 0;
-  }
-  @media (min-width: 1200px) and (min-height: 650px) {
-    .game { translate: -48px 0; }
   }
   .game-icon {
-    --icon-size: 50px;
-    translate: -2px 0;
+    --icon-size: 32px;
     position: relative;
     align-self: center;
     display: grid;
     place-items: center;
     flex: 0 0 var(--icon-size);
-    margin-inline-start: calc(32px - var(--icon-size));
     width: var(--icon-size);
     height: var(--icon-size);
     border-radius: 4px;
@@ -223,28 +217,28 @@
   }
   .game-name {
     flex: 1;
-    /* Preserve the original label bounds beside the wider icon. */
-    margin-inline-end: -6px;
-    translate: -6px 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
     background: #e1e8e9;
     border-radius: 6px;
     padding: .18rem .55rem;
   }
   .last-online { display: block; margin-top: .25rem; color: #58686a; }
   .last-online[hidden] { display: none; }
-  @media (max-width: 900px), (hover: none) and (pointer: coarse) {
-    .game { translate: none; }
+  @media (min-width: 1000px) and (orientation: landscape) and (hover: hover) and (pointer: fine) {
+    .game { translate: -12px 0; }
     .game-icon {
-      --icon-size: 32px;
-      margin-inline-start: 0;
-      translate: none;
+      --icon-size: 50px;
+      margin-inline-start: calc(32px - var(--icon-size));
+      translate: -2px 0;
     }
     .game-name {
-      margin-inline-end: 0;
-      translate: none;
-      min-width: 0;
-      overflow-wrap: anywhere;
+      margin-inline-end: -6px;
+      translate: -6px 0;
     }
+  }
+  @media (min-width: 1200px) and (min-height: 650px) and (orientation: landscape) and (hover: hover) and (pointer: fine) {
+    .game { translate: -48px 0; }
   }
   .custom-status {
     position: absolute;
