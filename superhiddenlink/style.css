@@ -22,7 +22,7 @@ a, button { cursor: url('../assets/custom-cursor.png') 18 12, pointer; }
 .flags img { width: 46%; max-width: 280px; height: auto; object-fit: contain; }
 .title-card img { display: block; width: 100%; max-width: 650px; height: auto; margin: auto; }
 .about-card { margin: 18px auto 80px; max-width: 1050px; padding: 48px; background: #fff; border-radius: 34px; box-shadow: 0 12px 40px rgba(128, 157, 145, .12); }
-.about-card p { margin: 0; text-align: center; font-family: 'Rodin NTLG', Nunito, Arial, sans-serif; font-size: clamp(1.05rem, 2.2vw, 1.65rem); line-height: 1.42; font-weight: 700; }
+.about-card p { max-width: 62ch; margin: 0 auto; text-align: center; font-family: 'Rodin NTLG', Nunito, Arial, sans-serif; font-size: clamp(1.05rem, 2.2vw, 1.65rem); line-height: 1.6; font-weight: 700; }
 .socials { text-align: center; }
 .social-heading { width: min(440px, 80%); display: block; margin: auto; }
 .social-links { display: flex; justify-content: center; gap: 30px; margin-top: 14px; }
