@@ -67,8 +67,7 @@ function finishStartup() {
   setTimeout(() => startup.remove(), 500);
 }
 
-const returningFromFriends = location.pathname.includes('/superhiddenlink/') &&
-  new URLSearchParams(location.search).get('from') === 'friends';
+const returningFromFriends = new URLSearchParams(location.search).get('from') === 'friends';
 if (returningFromFriends) {
   const cleanUrl = new URL(location.href);
   cleanUrl.searchParams.delete('from');
