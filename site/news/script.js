@@ -141,6 +141,7 @@ close.addEventListener('click', event => {
 });
 document.addEventListener('keydown', event => {
   if (channel.inert || event.metaKey || event.ctrlKey || event.altKey) return;
+  if (reader.hidden && event.key === 'Tab') channel.classList.add('keyboard');
   if (event.key === 'Escape' || event.key.toLowerCase() === 'b') {
     event.preventDefault();
     if (reader.hidden) close.click();

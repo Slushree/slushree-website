@@ -127,8 +127,8 @@ img { -webkit-user-drag: none; }
 }
 .inbox-scroll, .reader {
   background:
-    linear-gradient(#d3d6d6b8, #d3d6d6b8),
-    url("textures/dots.png") 0 0 / 21px,
+    linear-gradient(#d3d6d68c, #d3d6d68c),
+    url("textures/dots.png") 0 0 / 30px,
     linear-gradient(115deg, #c8caca, #e0e2e2 48%, #cdd0d0);
   background-blend-mode: normal, soft-light, normal;
 }
@@ -156,7 +156,7 @@ img { -webkit-user-drag: none; }
   box-shadow: inset 0 -5px 0 #ffffffbf, inset 0 -8px 12px #d9ffff, 0 0 13px #96ffffe0, 0 5px 10px #579fa68c;
 }
 .notice:hover { filter: brightness(1.055); }
-.notice:focus-visible { outline: 3px solid #0d88a8; outline-offset: -4px; }
+.notice:focus { outline: none; }
 .keyboard .notice:focus {
   background: #8cebf0;
   outline: none;
