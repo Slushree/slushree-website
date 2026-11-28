@@ -128,7 +128,7 @@ img { -webkit-user-drag: none; }
 .inbox-scroll, .reader {
   background:
     linear-gradient(#d3d6d6b8, #d3d6d6b8),
-    url("textures/dots.png") 0 0 / 16px,
+    url("textures/dots.png") 0 0 / 21px,
     linear-gradient(115deg, #c8caca, #e0e2e2 48%, #cdd0d0);
   background-blend-mode: normal, soft-light, normal;
 }
