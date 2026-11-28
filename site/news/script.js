@@ -126,7 +126,12 @@ for (const [index, notice] of announcements.entries()) {
 updateUnreadCount();
 
 back.addEventListener('click', () => showReader(false));
-channel.addEventListener('pointermove', () => channel.classList.remove('keyboard'));
+channel.addEventListener('pointermove', event => {
+  if (event.pointerType !== 'mouse' || !channel.classList.contains('keyboard')) return;
+  channel.classList.remove('keyboard');
+  const focused = document.activeElement;
+  if (noticeButtons.includes(focused)) focused.blur();
+});
 previous.addEventListener('click', () => openNotice(selectedIndex - 1));
 next.addEventListener('click', () => openNotice(selectedIndex + 1));
 close.addEventListener('click', event => {
