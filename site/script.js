@@ -1,7 +1,6 @@
 const startup = document.querySelector('#startup');
 const backgroundVideo = document.querySelector('#background-video');
 
-const firstVisit = false;
 const introSound = new Audio('assets/startup.mp3');
 const mainMusic = new Audio('assets/main-music.mp3');
 const friendsMusic = new Audio('site/assets/wii-u-friend-list-loop.wav');
@@ -22,10 +21,6 @@ mainMusic.loop = true;
 mainMusic.preload = 'auto';
 hoverSound.preload = 'auto';
 clickSound.preload = 'auto';
-
-if (firstVisit) {
-  localStorage.setItem('slushree-jingle-played', 'true');
-}
 
 function playAudio(audio) {
   if (document.hidden && audio !== backgroundVideo) return;
@@ -49,7 +44,6 @@ backgroundVideo.addEventListener('timeupdate', () => {
 
 introSound.addEventListener('ended', () => {
   introFinished = true;
-  if (firstVisit) startMainMusic();
 });
 
 function finishStartup() {
@@ -57,12 +51,10 @@ function finishStartup() {
 
   startupFinished = true;
 
-  if (!firstVisit) {
-    introSound.pause();
-    introSound.currentTime = 0;
-    introFinished = true;
-    startMainMusic();
-  }
+  introSound.pause();
+  introSound.currentTime = 0;
+  introFinished = true;
+  startMainMusic();
 
   startup.classList.add('startup-leaving');
   setTimeout(() => startup.remove(), 500);
