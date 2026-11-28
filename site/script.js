@@ -4,10 +4,13 @@ const backgroundVideo = document.querySelector('#background-video');
 const firstVisit = false;
 const introSound = new Audio('assets/startup.mp3');
 const mainMusic = new Audio('assets/main-music.mp3');
-const friendsMusic = new Audio('site/assets/friend-list-loop.flac');
+const friendsMusic = new Audio('site/assets/wii-u-friend-list-loop.wav');
 friendsMusic.loop = true;
 friendsMusic.volume = .65;
-let friendsFrame = null;
+const newsMusic = new Audio('site/news/wii-u-notifications-loop.wav');
+newsMusic.loop = true;
+newsMusic.volume = .65;
+let openChannel = null;
 const hoverSound = new Audio('assets/hover-sound.wav');
 const clickSound = new Audio('assets/click-sound.wav');
 
@@ -30,7 +33,7 @@ function playAudio(audio) {
 }
 
 function startMainMusic() {
-  if (introFinished && !friendsFrame) playAudio(mainMusic);
+  if (introFinished && !openChannel) playAudio(mainMusic);
 }
 
 backgroundVideo.addEventListener('loadedmetadata', () => {
@@ -79,7 +82,7 @@ if (returningFromFriends) {
 }
 
 document.addEventListener('pointerdown', () => {
-  if (friendsFrame) return;
+  if (openChannel) return;
   if (!startupFinished && introSound.paused) {
     playAudio(introSound);
   }
@@ -90,40 +93,47 @@ document.addEventListener('pointerdown', () => {
 }, { once: false });
 
 function pauseSound() {
-  [introSound, mainMusic, clickSound, hoverSound, friendsMusic].forEach(audio => audio.pause());
+  [introSound, mainMusic, clickSound, hoverSound, friendsMusic, newsMusic].forEach(audio => audio.pause());
 }
 
 function resumeMusic() {
-  playAudio(friendsFrame ? friendsMusic : introFinished ? mainMusic : introSound);
+  playAudio(openChannel?.music ?? (introFinished ? mainMusic : introSound));
 }
 
-const friendsLink = document.querySelector('.friends-launch');
-friendsLink.addEventListener('click', event => {
-  if (location.protocol === 'file:' || event.button !== 0 ||
-      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-  event.preventDefault();
-  if (friendsFrame) return;
-  pauseSound();
-  playAudio(friendsMusic);
-  const url = new URL(friendsLink.href);
-  url.searchParams.set('embedded', '1');
-  friendsFrame = document.createElement('iframe');
-  friendsFrame.title = 'Friends List';
-  friendsFrame.className = 'friends-frame';
-  friendsFrame.src = url.href;
-  document.body.append(friendsFrame);
-  document.querySelector('.page-shell').inert = true;
-  friendsFrame.focus();
-});
+const pageShell = document.querySelector('.page-shell');
+function registerChannel(selector, title, music, closeMessage) {
+  const link = document.querySelector(selector);
+  link.addEventListener('click', event => {
+    if (location.protocol === 'file:' || event.button !== 0 ||
+        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (openChannel) return;
+    pauseSound();
+    playAudio(music);
+    const url = new URL(link.href);
+    url.searchParams.set('embedded', '1');
+    const frame = document.createElement('iframe');
+    frame.title = title;
+    frame.className = 'friends-frame';
+    frame.src = url.href;
+    openChannel = { frame, link, music, closeMessage };
+    pageShell.inert = true;
+    document.body.append(frame);
+    frame.focus();
+  });
+}
+registerChannel('.friends-launch', 'Friends List', friendsMusic, 'friends:back');
+registerChannel('.news-launch', 'News', newsMusic, 'news:back');
 
 window.addEventListener('message', event => {
-  if (!friendsFrame || event.source !== friendsFrame.contentWindow ||
-      event.origin !== location.origin || event.data !== 'friends:back') return;
-  friendsFrame.remove();
-  friendsFrame = null;
-  friendsMusic.pause();
-  document.querySelector('.page-shell').inert = false;
-  friendsLink.focus({ preventScroll: true });
+  if (!openChannel || event.source !== openChannel.frame.contentWindow ||
+      event.origin !== location.origin || event.data !== openChannel.closeMessage) return;
+  const { frame, music, link } = openChannel;
+  openChannel = null;
+  frame.remove();
+  music.pause();
+  pageShell.inert = false;
+  link.focus({ preventScroll: true });
   resumeMusic();
 });
 

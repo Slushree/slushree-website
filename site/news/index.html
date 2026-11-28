@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="launch-screen" role="status">
+    <div class="launch-brand">
+      <img src="textures/launcher.png" width="128" height="128" alt="">
+      <span>Notifications</span>
+    </div>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="selector-teal">
+      <feFlood flood-color="#00abc3"/>
+      <feComposite in2="SourceAlpha" operator="in"/>
+    </filter>
+  </svg>
+  <main class="channel" aria-label="News channel" inert>
+    <section class="screen inbox" aria-label="Notifications inbox">
+      <header class="inbox-header">
+        <h1><img src="textures/header-icon.png" alt="">Notifications</h1>
+        <p class="unread" aria-live="polite">Unread: <span id="unread-count"></span></p>
+      </header>
+      <div class="inbox-scroll scroll-content" tabindex="0" aria-label="Announcements">
+        <ul class="notices" id="notices"></ul>
+      </div>
+    </section>
+
+    <section class="screen reader" aria-labelledby="notice-title" hidden>
+      <div class="reader-scroll scroll-content" tabindex="0" aria-label="Message">
+        <article>
+          <header class="notice-heading">
+            <span class="notice-icon" aria-hidden="true"></span>
+            <h2 id="notice-title"></h2>
+          </header>
+          <div class="message" id="notice-body"></div>
+        </article>
+      </div>
+      <footer class="reader-footer" aria-label="Message controls">
+        <button class="page-arrow previous" type="button" aria-label="Previous announcement" disabled>
+          <span class="arrow-symbol" aria-hidden="true"></span>
+          <span class="selector" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </button>
+        <button class="page-arrow next" type="button" aria-label="Next announcement" disabled>
+          <span class="arrow-symbol" aria-hidden="true"></span>
+          <span class="selector" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </button>
+      </footer>
+    </section>
+
+    <div class="scrollbar" hidden>
+      <button class="scroll-grip" type="button" tabindex="-1" aria-label="Drag to scroll"></button>
+    </div>
+
+    <a class="corner close" href="../../?from=friends" aria-label="Close Notifications">
+      <img class="corner-symbol" src="textures/close.png" alt="">
+    </a>
+    <button class="corner back" type="button" aria-label="Back to Notifications" hidden>
+      <img class="corner-symbol" src="textures/back.png" alt="">
+      <span class="selector" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    </button>
+  </main>
+
+  <template id="notice-template">
+    <li>
+      <button class="notice" type="button">
+        <span class="notice-icon" aria-hidden="true"></span>
+        <span class="notice-title"></span>
+        <span class="selector" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </button>
+    </li>
+  </template>
+</body>
+</html>
